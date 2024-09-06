@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
+import SelectSignUp from './components/SelectSignUp';
+import WeatherConditions from './components/WeatherConditions';
+import AirQuality from './components/AirQuality';
+import TempHumidity from './components/TempHumidity';
+import Home from './components/Home';
+import Main from './components/Main';
+import ContactUs from './components/ContactUs';
+
+import SignUp from './components/SignUp';
+import EmergencyRespSignUp from "./components/EmergencyRespSignUp";
+import GovernementAuthSignUp from "./components/GovernmentAuthSignUp";
+
+import GovernmentAuthVallidation from "./components/GovernmentAuthVallidation"
+import EmergencyRespondesrValidation  from './components/EmergencyRespValidation';
+import GeneralPublicValidation from './components/GeneralUserValidation';
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+const router = createBrowserRouter([
+  {path:"/", element: <Home />},
+  {path:"/select-sign-up", element: <SelectSignUp />},
+  {path: "/main", element:<Main />},
+  {path: "/contact-us", element:<ContactUs />},
+
+  {path:"/weatherData", element: <WeatherConditions />},
+  {path:"/airQuality", element: <AirQuality />},
+  {path:"/temp-humidity", element: <TempHumidity />},
+
+  {path:"/genral-public-sign-up", element: <SignUp />},
+  {path:"/government-auth-sign-up", element: <GovernementAuthSignUp />},
+  {path:"/emergency-resp-sign-up", element: <EmergencyRespSignUp />},
+
+  {path:"/genral-public-validation", element: <GeneralPublicValidation />},
+  {path:"/government-auth-validation", element: <GovernmentAuthVallidation />},
+  {path:"/emergency-resp-validation", element: <EmergencyRespondesrValidation />},
+
+])
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <RouterProvider router={router} />
+  );
 }
+
 
 export default App
