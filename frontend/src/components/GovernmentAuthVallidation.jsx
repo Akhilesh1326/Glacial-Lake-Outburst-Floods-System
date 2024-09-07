@@ -23,7 +23,7 @@ const SignUp = () => {
         })
         console.log(resp);
         if(resp.data.msg==="done"){
-          navigate("/government-auth-validation")
+          navigate("/main")
         }
     } catch(err){
       console.log("Err = ",err)
