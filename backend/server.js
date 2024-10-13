@@ -78,9 +78,9 @@ io.on("connection", (socket) => {
         .then(() => {
             console.log("DB connected");
             handleAlert(); // Only call handleAlert after DB connection
-            const PORT = process.env.PORT || 3000;
+            const PORT = 3000;
             server.listen(PORT, () => {
-                console.log('Server is running on http://localhost:4000');
+                console.log('Server is running on http://localhost:',PORT);
             });
         })
         .catch((error) => {
