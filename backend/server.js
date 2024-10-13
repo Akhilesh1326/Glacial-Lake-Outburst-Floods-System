@@ -73,8 +73,8 @@ io.on("connection", (socket) => {
 
 // Start Express server after MongoDB connection
 
-    const uri = "mongodb+srv://akhileshpimple3:<ytYxoa3so6WZxoxF>@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
-    connectDB.connectToDB(process.env.MONGODB ?? uri)
+    const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
+    connectDB.connectToDB(uri)
         .then(() => {
             console.log("DB connected");
             handleAlert(); // Only call handleAlert after DB connection
