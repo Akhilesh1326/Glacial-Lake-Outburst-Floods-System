@@ -72,17 +72,20 @@ io.on("connection", (socket) => {
 
 
 // Start Express server after MongoDB connection
-connectDB.connectToDB(process.env.MONGODB ?? "mongodb://127.0.0.1:27017/GLOFMAS")
-    .then(() => {
-        console.log("DB connected");
-        handleAlert(); // Only call handleAlert after DB connection
-        server.listen(4000, () => {
-            console.log('Server is running on http://localhost:4000');
+
+    const uri = "mongodb+srv://akhileshpimple3:<ytYxoa3so6WZxoxF>@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
+    connectDB.connectToDB(process.env.MONGODB ?? uri)
+        .then(() => {
+            console.log("DB connected");
+            handleAlert(); // Only call handleAlert after DB connection
+            const PORT = process.env.PORT || 3000;
+            server.listen(PORT, () => {
+                console.log('Server is running on http://localhost:4000');
+            });
+        })
+        .catch((error) => {
+            console.error('Failed to connect to MongoDB', error);
         });
-    })
-    .catch((error) => {
-        console.error('Failed to connect to MongoDB', error);
-    });
 
 app.use(express.json());
 app.use(bodyParser.json());
