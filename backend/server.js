@@ -10,12 +10,18 @@ const mongoose = require('mongoose');
 const app = express();
 const server = http.createServer(app);
 
-// Socket server
+// CORS for both HTTP requests and Socket.io
+app.use(cors({
+    origin: 'http://glof-frontend.s3-website.ap-south-1.amazonaws.com', // Allow only your React app's origin
+    methods: ['GET', 'POST'],        // Allow specific HTTP methods
+    credentials: true                // Allow cookies and other credentials
+}));
+
 const io = new Server(server, {
     cors: {
-        origin: 'http://glof-frontend.s3-website.ap-south-1.amazonaws.com/', // Allow only your React app's origin
+        origin: 'http://glof-frontend.s3-website.ap-south-1.amazonaws.com', // Ensure it's the same as above
         methods: ['GET', 'POST'],
-        credentials: true                // Allow cookies and other credentials
+        credentials: true
     }
 });
 
@@ -58,8 +64,7 @@ io.on("connection", (socket) => {
             handleAlertMsg();
         }
 
-        // Ensure message is sent as an array or in the expected format
-        io.emit("message", message); // Wrap in an array if it's not one
+        io.emit("message", message); // Broadcast the message to all clients
     });
 
     // Handle client disconnection
@@ -68,49 +73,52 @@ io.on("connection", (socket) => {
     });
 });
 
-// Function to handle sending alerts via SMS
+// Function to handle alert messages (which was missing)
+function handleAlertMsg() {
+    console.log('Alert message handled');
+    // Add your logic here
+}
 
-
-// Start Express server after MongoDB connection
-
-    const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
-    connectDB.connectToDB(uri)
-        .then(() => {
-            console.log("DB connected");
-            handleAlert(); // Only call handleAlert after DB connection
-            const PORT = 3000;
-            app.listen(3000, '0.0.0.0', () => {
-                console.log('App running on port 3000');
-            });
-        })
-        .catch((error) => {
-            console.error('Failed to connect to MongoDB', error);
+// MongoDB Connection and Server Start
+const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
+connectDB.connectToDB(uri)
+    .then(() => {
+        console.log("DB connected");
+        handleAlert(); // Only call handleAlert after DB connection
+        const PORT = 3000;
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`App running on port ${PORT}`);
         });
+    })
+    .catch((error) => {
+        console.error('Failed to connect to MongoDB', error);
+    });
 
+// Middleware for parsing JSON and URL-encoded bodies
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 
-// API requests from frontend
+// API routes
 app.get("/api/msg", (req, res) => {
     res.json({ msg: "hello" });
 });
 
 app.get("/api/weatherData/:place", async (req, res) => {
     try {
-        const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=87d09b2a950c4a63a0c83743240409&q={${req.params.place}}&aqi=yes`);
-        console.log("resp = ", response.data);
+        // Removed extra curly braces around req.params.place
+        const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=87d09b2a950c4a63a0c83743240409&q=${req.params.place}&aqi=yes`);
+        console.log("Weather API response = ", response.data);
         res.json(response.data);
     } catch (err) {
-        console.log("Error occurred: ", err);
+        console.error("Error occurred while fetching weather data: ", err);
         res.status(500).json({ error: "Failed to fetch weather data" });
     }
 });
 
-
 app.post("/api/alert/:msg", async (req, res) => {
     const data = req.params;
-    console.log("Data = ", data);
+    console.log("Alert data = ", data);
     if (data && data.msg === "Alert") {
         handleAlertMsg();
         res.json({ msg: "Got Alert" });
@@ -118,118 +126,87 @@ app.post("/api/alert/:msg", async (req, res) => {
         res.json({ msg: "No Alert" });
     }
 });
-app.get("/api/hello", async (req, res) => {
-    res.json({msg:"Hello this is akhilesh"})
+
+app.get("/api/hello", (req, res) => {
+    res.json({ msg: "Hello this is akhilesh" });
 });
 
-
-// DataBase connection
-// connectDB.connectToDB(process.env.MONGODB ?? "mongodb://127.0.0.1:27017/GLOFMAS")
-//     .then(() => {
-//         console.log("DB connected");
-//     });
-
-
-
-app.use(express.json());
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
-
-const { handleEmergencyRespLogIn,
-    handleEmergencyRespValidation,
-    handleGenralPublicLogIn,
-    handleGenralPublicValidation,
-    handleGovernmentAuthLogin,
-    handleGovernmentAuthValidation, } = require("./controllers/UserData");
-
-// API requests from frontend
-// app.use(cors({
-//     origin: 'http://localhost:5173', // Allow only your React app's origin
-//     methods: ['GET', 'POST'],        // Allow specific HTTP methods
-//     credentials: true                // Allow cookies and other credentials
-// }));
-
-app.get("/api/msg", (req, res) => {
-    res.json({ msg: "hello" });
-});
-
-app.get("/api/weatherData/:place", async (req, res) => {
-    try {
-        const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=87d09b2a950c4a63a0c83743240409&q={${req.params.place}}&aqi=yes`);
-        console.log("resp = ", response.data);
-        res.json(response.data);
-    } catch (err) {
-        console.log("Error occurred: ", err);
-        res.status(500).json({ error: "Failed to fetch weather data" });
-    }
-});
-
+// Handling General Public Login
 app.post("/api/general-public-singup/login-data", async (req, res) => {
     try {
         const data = req.body;
-        const result = await handleGenralPublicLogIn(data)
-        console.log(result);
-        res.json({ msg: "done" })
+        const result = await handleGenralPublicLogIn(data);
+        console.log("General Public Login result: ", result);
+        res.json({ msg: "done" });
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in General Public Login: ", error);
+        res.status(500).json({ error: "Failed to log in" });
     }
-})
+});
 
+// Handling General Public Validation
 app.post("/api/general-public-validation/data", async (req, res) => {
     try {
         const data = req.body;
-        console.log(data)
-        const result = await handleGenralPublicValidation(data)
-        console.log(result);
+        const result = await handleGenralPublicValidation(data);
+        console.log("General Public Validation result: ", result);
         if (data.location === result.location) {
-
-            res.json({ msg: "done" })
+            res.json({ msg: "done" });
         }
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in General Public Validation: ", error);
+        res.status(500).json({ error: "Validation failed" });
     }
-})
+});
 
+// Handling Government Authority Login
 app.post("/api/government-auth-singup/login-data", async (req, res) => {
     try {
         const data = req.body;
-        const result = await handleGovernmentAuthLogin(data)
-        console.log(result);
-        res.json({ msg: "done" })
+        const result = await handleGovernmentAuthLogin(data);
+        console.log("Government Authority Login result: ", result);
+        res.json({ msg: "done" });
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in Government Authority Login: ", error);
+        res.status(500).json({ error: "Failed to log in" });
     }
-})
+});
 
+// Handling Government Authority Validation
 app.post("/api/government-auth-validation/data", async (req, res) => {
     try {
         const data = req.body;
-        const result = await handleGovernmentAuthValidation(data)
-        console.log(result);
-        res.json({ msg: "done" })
+        const result = await handleGovernmentAuthValidation(data);
+        console.log("Government Authority Validation result: ", result);
+        res.json({ msg: "done" });
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in Government Authority Validation: ", error);
+        res.status(500).json({ error: "Validation failed" });
     }
-})
+});
 
+// Handling Emergency Responder Login
 app.post("/api/emergency-resp-singup/login-data", async (req, res) => {
     try {
         const data = req.body;
-        const result = await handleEmergencyRespLogIn(data)
-        console.log(result);
-        res.json({ msg: "done" })
+        const result = await handleEmergencyRespLogIn(data);
+        console.log("Emergency Responder Login result: ", result);
+        res.json({ msg: "done" });
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in Emergency Responder Login: ", error);
+        res.status(500).json({ error: "Failed to log in" });
     }
-})
+});
 
+// Handling Emergency Responder Validation
 app.post("/api/emergency-resp-validation/data", async (req, res) => {
     try {
         const data = req.body;
-        const result = await handleEmergencyRespValidation(data)
-        console.log(result);
-        res.json({ msg: "done" })
+        const result = await handleEmergencyRespValidation(data);
+        console.log("Emergency Responder Validation result: ", result);
+        res.json({ msg: "done" });
     } catch (error) {
-        console.log("Error msg = ", error)
+        console.error("Error in Emergency Responder Validation: ", error);
+        res.status(500).json({ error: "Validation failed" });
     }
-})
+});
