@@ -107,6 +107,7 @@ app.get("/api/weatherData/:place", async (req, res) => {
     }
 });
 
+
 app.post("/api/alert/:msg", async (req, res) => {
     const data = req.params;
     console.log("Data = ", data);
@@ -117,7 +118,9 @@ app.post("/api/alert/:msg", async (req, res) => {
         res.json({ msg: "No Alert" });
     }
 });
-
+app.get("/api/hello", async (req, res) => {
+    res.json({msg:"Hello this is akhilesh"})
+});
 
 
 // DataBase connection
