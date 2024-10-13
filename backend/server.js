@@ -79,8 +79,9 @@ io.on("connection", (socket) => {
             console.log("DB connected");
             handleAlert(); // Only call handleAlert after DB connection
             const PORT = 3000;
-            server.listen(3000, '0.0.0.0', () => {
+            app.listen(3000, '0.0.0.0', () => {
                 console.log('App running on port 3000');
+            });
         })
         .catch((error) => {
             console.error('Failed to connect to MongoDB', error);
