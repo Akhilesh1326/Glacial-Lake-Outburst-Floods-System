@@ -13,7 +13,7 @@ const server = http.createServer(app);
 // Socket server
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173', // Allow only your React app's origin
+        origin: 'http://glof-frontend.s3-website.ap-south-1.amazonaws.com/', // Allow only your React app's origin
         methods: ['GET', 'POST'],
         credentials: true                // Allow cookies and other credentials
     }
