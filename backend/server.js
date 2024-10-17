@@ -25,6 +25,15 @@ const io = new Server(server, {
     }
 });
 
+const {
+    handleEmergencyRespLogIn,
+    handleEmergencyRespValidation,
+    handleGenralPublicLogIn,
+    handleGenralPublicValidation,
+    handleGovernmentAuthLogin,
+    handleGovernmentAuthValidation,
+} = require('./controllers/UserData')
+
 let allContacts = [];
 
 // Handle Alert Function
@@ -210,3 +219,7 @@ app.post("/api/emergency-resp-validation/data", async (req, res) => {
         res.status(500).json({ error: "Validation failed" });
     }
 });
+
+app.get("/api/hello",async(req,res)=>{
+    res.json({msg:"Hello from GLOF"})
+})
