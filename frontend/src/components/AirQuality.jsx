@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Pie } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
+import Header from './Header';
+import { Link } from 'react-router-dom';
+
 
 const AirQuality = () => {
     const [weatherData, setWeatherData] = useState(null);
@@ -63,16 +66,22 @@ const AirQuality = () => {
 
     return (
         <div>
+            <Header />
             <input className='border-2 border-black py-2 px-4 m-4 bg-slate-400 rounded-md' type="text" value={place} onChange={(e)=>setPlace(e.target.value)}/>
 
-            <button className='border py-2 px-4 border-black rounded-lg bg-slate-900 text-slate-200' onClick={handleWeatherData}>Submit</button>
+            <button className='border py-2 px-4 border-black rounded-lg bg-slate-900 text-slate-200 mx-1' onClick={handleWeatherData}>Submit</button>
+            <Link to="/weatherData"><button className='border py-2 px-4 border-black rounded-lg bg-slate-900 text-slate-200 mx-1' >Wheater</button></Link>
+            <Link to="/temp-humidity"><button className='border py-2 px-4 border-black rounded-lg bg-slate-900 text-slate-200 mx-1' >Humidity And Temperature</button></Link>
             {error && <p>{error}</p>}
             {weatherData && (
-                <div>
+                <div className='flex flex-col justify-center items-center'>
                     <h3>Weather Conditions:</h3>
                     <p>Temperature: {weatherData.current.temp_c}°C</p>
                     <p>Condition: {weatherData.current.condition.text}</p>
+                    <div className='w-[300px] h-[300px]'>
+
                     <Pie data={chartData} />
+                    </div>
                 </div>
             )}
         </div>
