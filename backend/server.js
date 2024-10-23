@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const connectDB = require('./connectDB');
 const { Server } = require("socket.io");
 const mongoose = require('mongoose');
+const twilio = require('twilio');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -31,8 +33,13 @@ const {
     handleGenralPublicLogIn,
     handleGenralPublicValidation,
     handleGovernmentAuthLogin,
-    handleGovernmentAuthValidation,
+    handleGovernmentAuthValidation, 
 } = require('./controllers/UserData')
+
+const {
+    handleAlertForm,
+    handleAllAlertForm
+} = require('./controllers/Alert');
 
 let allContacts = [];
 
@@ -56,6 +63,7 @@ async function handleAlert() {
         }
 
         console.log('All contacts:', allContacts);
+
     } catch (error) {
         console.error('Error retrieving contacts:', error);
     }
@@ -89,7 +97,7 @@ function handleAlertMsg() {
 }
 
 // MongoDB Connection and Server Start
-const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";       
+const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";
 connectDB.connectToDB(process.env.MONGODB ?? "mongodb://127.0.0.1:27017/GLOFMAS")
     .then(() => {
         console.log("DB connected");
@@ -129,10 +137,31 @@ app.post("/api/alert/:msg", async (req, res) => {
     const data = req.params;
     console.log("Alert data = ", data);
     if (data && data.msg === "Alert") {
+        console.log("Alert called")
         handleAlertMsg();
-        res.json({ msg: "Got Alert" });
+        for(call in allContacts){
+            console.log("Call - ",call)
+            const accountSid = process.env.TWILIO_SID; 
+            const authToken = process.env.TWILIO_AUTH;   
+    
+            const client = new twilio(accountSid, authToken);
+    
+            client.messages
+                .create({
+                    body: 'Residents in low-lying areas are urged to stay alert for the risk of a Glacial Lake Outburst Flood (GLOF). Heavy rain or rising temperatures may cause sudden flooding. Evacuate to higher ground immediately and follow official instructions.', 
+                    from: '+12342941452',
+                    to: `+91${allContacts[call]}`  
+                })
+                .then(message => console.log(`Message sent with SID: ${message.sid}`))
+                .catch(error => console.error('Error sending message:', error));
+
+        }
+
+        // console.log("all fuck = ",allContacts)
+
+        res.json({ msg: "Done" });
     } else {
-        res.json({ msg: "No Alert" });
+        res.json({ msg: "NotDone" });
     }
 });
 
@@ -220,6 +249,31 @@ app.post("/api/emergency-resp-validation/data", async (req, res) => {
     }
 });
 
-app.get("/api/hello",async(req,res)=>{
-    res.json({msg:"Hello from GLOF"})
+app.post("/api/send-alert-form",async(req,res)=>{
+    try {
+        const data = req.body;
+        console.log("data = ",data.name)
+        const result = await handleAlertForm(data);
+        console.log("Result of submit of alert = ",result);
+        
+        res.json({msg:"done"})
+    } catch (error) {
+        console.error("Error in Submitting the alert form: ", error);
+        res.status(500).json({ error: "Validation failed" });
+    }
+})
+
+app.get("/api/all-alert-data", async(req,res)=>{
+    try {
+        const result = await handleAllAlertForm()
+        console.log("All alert fomrs = ",result);
+        res.json({alertForm:result});
+
+    } catch (error) {
+        console.log("Error while getting alert from data in server ",error)
+    }
+})
+
+app.get("/api/hello", async (req, res) => {
+    res.json({ msg: "Hello from GLOF" })
 })
