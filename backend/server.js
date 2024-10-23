@@ -98,7 +98,7 @@ function handleAlertMsg() {
 
 // MongoDB Connection and Server Start
 const uri = "mongodb+srv://akhileshpimple3:ytYxoa3so6WZxoxF@cluster-glof.cxbkb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-glof";
-connectDB.connectToDB(process.env.MONGODB ?? "mongodb://127.0.0.1:27017/GLOFMAS")
+connectDB.connectToDB(uri)
     .then(() => {
         console.log("DB connected");
         handleAlert(); // Only call handleAlert after DB connection
