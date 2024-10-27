@@ -13,7 +13,7 @@ const SignUp = () => {
 
   const handleSubmitSignUpData = async() =>{
     try{
-        const resp = await axios.post("/api/general-public-validation/data",{
+        const resp = await axios.post("https://glacial-lake-outburst-floods-system.onrender.com/api/general-public-validation/data",{
           location,
           preferredCommunication,
           governementIdProof,
@@ -21,7 +21,7 @@ const SignUp = () => {
         })
         console.log(resp);
         if(resp.data.msg==="done"){
-          navigate("/main")
+          navigate("/general-main")
         }
     } catch(err){
       console.log("Err = ",err)
