@@ -14,7 +14,7 @@ const SignUp = () => {
 
   const handleSubmitSignUpData = async() =>{
     try{
-        const resp = await axios.post("/api/emergency-resp-singup/login-data",{
+        const resp = await axios.post("https://glacial-lake-outburst-floods-system.onrender.com/api/emergency-resp-singup/login-data",{
           fullName,
           email,
           contact,
@@ -31,7 +31,7 @@ const SignUp = () => {
   }
   return (
     <div className='flex flex-col justify-center items-center bg-slate-900 text-slate-200 h-screen'>
-        <div className='text-4xl mb-10'>Governemtn Authorities Sign Up</div>
+        <div className='text-4xl mb-10'>Government Authorities Sign Up</div>
         <div className='flex flex-col text-lg font-light text-slate-200'>
           <div>Full Name</div>
           <input type="text" placeholder='Enter Name' value={fullName} onChange={(e)=>setName(e.target.value)}className="bg-slate-600 py-2 px-4 mx-5 my-2 rounded-lg"/>
