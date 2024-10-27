@@ -15,7 +15,7 @@ const AirQuality = () => {
     const handleWeatherData = async () => {
         try {
             console.log(place)
-            const resp = await axios.get(`/api/weatherData/${place}`);
+            const resp = await axios.get(`https://glacial-lake-outburst-floods-system.onrender.com/api/weatherData/${place}`);
             setWeatherData(resp.data);
             setError(null); // Clear any previous errors
         } catch (err) {
