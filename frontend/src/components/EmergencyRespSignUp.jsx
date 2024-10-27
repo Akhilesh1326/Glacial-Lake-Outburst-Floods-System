@@ -13,7 +13,7 @@ const SignUp = () => {
 
   const handleSubmitSignUpData = async() =>{
     try{
-        const resp = await axios.post("/api/emergency-resp-singup/login-data",{
+        const resp = await axios.post("https://glacial-lake-outburst-floods-system.onrender.com/api/emergency-resp-singup/login-data",{
           fullName,
           email,
           contact,
