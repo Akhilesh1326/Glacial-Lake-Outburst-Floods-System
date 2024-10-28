@@ -14,7 +14,7 @@ const SignUp = () => {
 
   const handleSubmitSignUpData = async() =>{
     try{
-        const resp = await axios.post("/api/government-auth-validation/data",{
+        const resp = await axios.post("https://glacial-lake-outburst-floods-system.onrender.com/api/government-auth-validation/data",{
           jurisdiction,
           emergencyContactInformation,
           accessLevel,
