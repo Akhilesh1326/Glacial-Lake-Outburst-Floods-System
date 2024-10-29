@@ -5,8 +5,11 @@ import WeatherConditions from './components/WeatherConditions';
 import AirQuality from './components/AirQuality';
 import TempHumidity from './components/TempHumidity';
 import Home from './components/Home';
-import Main from './components/Main';
+import Main from './components/GovMain';
+import GeneralUserMain from './components/GeneralMain';
 import ContactUs from './components/ContactUs';
+import KnowMore from './components/KnowMore';
+import AlertDisplay from './components/AlertDisplay';
 
 import SignUp from './components/SignUp';
 import EmergencyRespSignUp from "./components/EmergencyRespSignUp";
@@ -21,7 +24,10 @@ const router = createBrowserRouter([
   {path:"/", element: <Home />},
   {path:"/select-sign-up", element: <SelectSignUp />},
   {path: "/main", element:<Main />},
+  {path: "/general-main", element:<GeneralUserMain />},
   {path: "/contact-us", element:<ContactUs />},
+  {path: "/knowmore", element:<KnowMore />},
+  {path: "/alertDisplay", element:<AlertDisplay />},
 
   {path:"/weatherData", element: <WeatherConditions />},
   {path:"/airQuality", element: <AirQuality />},
